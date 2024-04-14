@@ -1,4 +1,4 @@
-CountyFips,State,County,Affordability
+County,State,CountyName,Affordability
 01001,AL,Autauga County,1.189
 01003,AL,Baldwin County,1.207
 01005,AL,Barbour County,0.958
