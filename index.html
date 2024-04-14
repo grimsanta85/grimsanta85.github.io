@@ -18,24 +18,34 @@
             maxZoom: 18,
         }).addTo(map);
 
-        // Load the CSV file
-        Papa.parse('data.csv', {
-            download: true,
-            header: true,
-            complete: function(results) {
+        // Load the CSV file using fetch API
+        fetch('data.csv', { mode: 'same-origin' })
+            .then(response => response.text())
+            .then(csv => {
+                var results = Papa.parse(csv, { header: true });
                 // Load the GeoJSON file
                 fetch('https://gist.githubusercontent.com/sdwfrost/d1c73f91dd9d175998ed166eb216994a/raw/e89c35f308cee7e2e5a784e1d3afc5d449e9e4bb/counties.geojson')
                     .then(response => response.json())
                     .then(geojson => {
-                        // Create a color scale
-                        var colorScale = chroma.scale(['#e0ecf4', '#8856a7']).domain([1, 2]); // Adjust the domain based on your data range
+                        // Create a color scale based on the Affordability ranges
+                        var colorScale = chroma.scale([
+                            '#808080', // Grey
+                            '#006400', // Dark Green
+                            '#90EE90', // Light Green
+                            '#9ACD32', // Greenish Yellow
+                            '#FFFF00', // Yellow
+                            '#FFA500', // Yellowish Orange
+                            '#FF8C00', // Orange
+                            '#FF0000', // Red
+                            '#8B0000'  // Dark Red
+                        ]).domain([0, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 2.1]);
 
                         // Add the GeoJSON layer to the map
                         L.geoJSON(geojson, {
                             style: function(feature) {
                                 var county = feature.properties.name;
                                 var state = feature.properties.state;
-                                var affordability = results.data.find(d => d.State === state && d.County === county)?.Affordability;
+                                var affordability = parseFloat(results.data.find(d => d.State === state && d.County === county)?.Affordability);
                                 return {
                                     fillColor: affordability ? colorScale(affordability).hex() : '#ccc',
                                     fillOpacity: 0.7,
@@ -46,8 +56,7 @@
                             }
                         }).addTo(map);
                     });
-            }
-        });
+            });
     </script>
 </body>
 </html>
