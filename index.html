@@ -6,6 +6,26 @@
     <script src="https://unpkg.com/papaparse@5.3.0/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js"></script>
 </head>
+<style>
+    .legend {
+        background-color: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+    }
+</style>
 <body>
     <div id="map" style="height: 600px;"></div>
     <script>
@@ -60,6 +80,41 @@
                                 };
                             }
                         }).addTo(map);
+                        // Create a custom control for the legend
+                        var legend = L.control({ position: 'bottomright' });
+    
+                        legend.onAdd = function (map) {
+                            var div = L.DomUtil.create('div', 'legend');
+                            var labels = [
+                                'Affordable',
+                                'Somewhat Affordable',
+                                'Moderately Affordable',
+                                'Less Affordable',
+                                'Not Affordable',
+                                'Unaffordable'
+                            ];
+                            var colors = [
+                                '#008000', // Green
+                                '#7FFF00', // Green Yellow leaning Green
+                                '#9ACD32', // Yellow Green
+                                '#ADFF2F', // Yellow Green leaning Yellow
+                                '#FFFF00', // Yellow
+                                '#FFA500', // Orange
+                                '#FF4500', // Red-Orange
+                                '#FF0000'  // Red
+                            ];
+
+                            for (var i = 0; i < labels.length; i++) {
+                                div.innerHTML += '<div class="legend-item">' +
+                                    '<div class="legend-color" style="background-color: ' + colors[i] + '"></div>' +
+                                    '<span>' + labels[i] + '</span>' +
+                                    '</div>';
+                            }
+
+                            return div;
+                        };
+
+                        legend.addTo(map);
                     });
             });
     </script>
