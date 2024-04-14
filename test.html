@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/papaparse@5.3.0/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js"></script>
+</head>
+<body>
+    <div id="map" style="height: 600px;"></div>
+    <script>
+        // Create a Leaflet map
+        var map = L.map('map').setView([37.8, -96], 4);
+
+        // Add a tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+            maxZoom: 18,
+        }).addTo(map);
+
+        // Load the CSV file
+        Papa.parse('data.csv', {
+            download: true,
+            header: true,
+            complete: function(results) {
+                // Load the GeoJSON file
+                fetch('https://gist.githubusercontent.com/sdwfrost/d1c73f91dd9d175998ed166eb216994a/raw/e89c35f308cee7e2e5a784e1d3afc5d449e9e4bb/counties.geojson')
+                    .then(response => response.json())
+                    .then(geojson => {
+                        // Create a color scale
+                        var colorScale = chroma.scale(['#e0ecf4', '#8856a7']).domain([1, 2]); // Adjust the domain based on your data range
+
+                        // Add the GeoJSON layer to the map
+                        L.geoJSON(geojson, {
+                            style: function(feature) {
+                                var county = feature.properties.name;
+                                var state = feature.properties.state;
+                                var affordability = results.data.find(d => d.State === state && d.County === county)?.Affordability;
+                                return {
+                                    fillColor: affordability ? colorScale(affordability).hex() : '#ccc',
+                                    fillOpacity: 0.7,
+                                    weight: 1,
+                                    color: 'white',
+                                    dashArray: '3'
+                                };
+                            }
+                        }).addTo(map);
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
