@@ -43,7 +43,7 @@
                         // Add the GeoJSON layer to the map
                         L.geoJSON(geojson, {
                             style: function(feature) {
-                                var countyFips = feature.properties.FIPS;
+                                var countyFips = feature.properties.GEOID;
                                 var affordability = parseFloat(results.data.find(d => d.County === countyFips)?.Affordability);
                                     return {
                                         fillColor: affordability ? colorScale(affordability).hex() : '#ccc',
