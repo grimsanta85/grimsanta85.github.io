@@ -43,16 +43,15 @@
                         // Add the GeoJSON layer to the map
                         L.geoJSON(geojson, {
                             style: function(feature) {
-                                var county = feature.properties.name;
-                                var state = feature.properties.state;
-                                var affordability = parseFloat(results.data.find(d => d.State === state && d.County === county)?.Affordability);
-                                return {
-                                    fillColor: affordability ? colorScale(affordability).hex() : '#ccc',
-                                    fillOpacity: 0.7,
-                                    weight: 1,
-                                    color: 'white',
-                                    dashArray: '3'
-                                };
+                                var countyFips = feature.properties.FIPS;
+                                var affordability = parseFloat(results.data.find(d => d.County === countyFips)?.Affordability);
+                                    return {
+                                        fillColor: affordability ? colorScale(affordability).hex() : '#ccc',
+                                        fillOpacity: 0.7,
+                                        weight: 1,
+                                        color: 'white',
+                                        dashArray: '3'
+                                    };
                             }
                         }).addTo(map);
                     });
