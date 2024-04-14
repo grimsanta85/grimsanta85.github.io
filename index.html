@@ -36,6 +36,27 @@
         height: 20px;
         margin-right: 5px;
     }
+    
+    .info-container {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 10px;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        font-family: Arial, sans-serif;
+        display: none;
+    }
+
+    .info-label {
+        color: blue;
+        font-weight: bold;
+    }
+
+    .info-value {
+        color: red;
+    }
 </style>
 <body>
     <div id="map"></div>
@@ -130,6 +151,46 @@
                         legend.addTo(map);
                     });
             });
+        
+        // Create a custom control for the info container
+        var info = L.control({ position: 'topright' });
+
+        info.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'info-container');
+            div.innerHTML = '<div class="info-label">Income:COL</div><div class="info-value"></div>';
+            return div;
+        };
+
+        info.addTo(map);
+
+        // Get the info container element
+        var infoContainer = document.querySelector('.info-container');
+        var infoValue = infoContainer.querySelector('.info-value');
+
+        // Add mouseover and mouseout events to the GeoJSON layer
+        L.geoJSON(geojson, {
+            style: function (feature) {
+                // Existing style function code
+            },
+            onEachFeature: function (feature, layer) {
+                layer.on({
+                    mouseover: function (e) {
+                        var countyFips = feature.properties.GEOID;
+                        var affordability = affordabilityLookup[countyFips];
+
+                        if (affordability) {
+                            infoValue.textContent = affordability.toFixed(3);
+                            infoContainer.style.display = 'block';
+                        } else {
+                            infoContainer.style.display = 'none';
+                        }
+                    },
+                    mouseout: function (e) {
+                        infoContainer.style.display = 'none';
+                    }
+                });
+            }
+        }).addTo(map);
     </script>
 </body>
 </html>
