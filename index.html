@@ -111,12 +111,11 @@
                                     dashArray: '3'
                                 };
                             }
-                        })
-                        .addTo(map);
+                        }).addTo(map);
 
-                         // Create a custom control for the info container
+                        // Create a custom control for the info container
                         var info = L.control({ position: 'topright' });
-                
+
                         info.onAdd = function (map) {
                             var div = L.DomUtil.create('div', 'info-container');
                             div.innerHTML = '<div class="info-label">Income:COL</div><div class="info-value"></div>';
@@ -132,14 +131,22 @@
                         // Add mouseover and mouseout events to the GeoJSON layer
                         L.geoJSON(geojson, {
                             style: function (feature) {
-                                // Existing style function code
+                                var countyFips = feature.properties.GEOID;
+                                var affordability = affordabilityLookup[countyFips];
+                                return {
+                                    fillColor: affordability ? colorScale(affordability).hex() : '#808080',
+                                    fillOpacity: 0.7,
+                                    weight: 0, // Set the outline weight to 0
+                                    color: 'white',
+                                    dashArray: '3'
+                                };
                             },
                             onEachFeature: function (feature, layer) {
                                 layer.on({
                                     mouseover: function (e) {
                                         var countyFips = feature.properties.GEOID;
                                         var affordability = affordabilityLookup[countyFips];
-                        
+
                                         if (affordability) {
                                             infoValue.textContent = affordability.toFixed(3);
                                             infoContainer.style.display = 'block';
@@ -152,7 +159,7 @@
                             }
                         }).addTo(map);
                     });
-                });
+            });
     </script>
 </body>
 </html>
