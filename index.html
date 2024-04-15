@@ -114,60 +114,49 @@
                         })
                         .addTo(map);
 
-                         // Load the CSV file using fetch API
-                        fetch('data.csv', { mode: 'same-origin' })
-                            .then(response => response.text())
-                            .then(csv => {
-                                var results = Papa.parse(csv, { header: true });
-                                // Load the GeoJSON file
-                                fetch('https://gist.githubusercontent.com/sdwfrost/d1c73f91dd9d175998ed166eb216994a/raw/e89c35f308cee7e2e5a784e1d3afc5d449e9e4bb/counties.geojson')
-                                    .then(response => response.json())
-                                    .then(geojson => {
-                                        // Existing code that creates the color scale and affordability lookup
+                         // Create a custom control for the info container
+                        var info = L.control({ position: 'topright' });
                 
-                                        // Create a custom control for the info container
-                                        var info = L.control({ position: 'topright' });
+                        info.onAdd = function (map) {
+                            var div = L.DomUtil.create('div', 'info-container');
+                            div.innerHTML = '<div class="info-label">Income:COL</div><div class="info-value"></div>';
+                            return div;
+                        };
+
+                        info.addTo(map);
+
+                        // Get the info container element
+                        var infoContainer = document.querySelector('.info-container');
+                        var infoValue = infoContainer.querySelector('.info-value');
+
+                        // Add mouseover and mouseout events to the GeoJSON layer
+                        L.geoJSON(geojson, {
+                            style: function (feature) {
+                                // Existing style function code
+                            },
+                            onEachFeature: function (feature, layer) {
+                                layer.on({
+                                    mouseover: function (e) {
+                                        var countyFips = feature.properties.GEOID;
+                                        var affordability = affordabilityLookup[countyFips];
                 
-                                        info.onAdd = function (map) {
-                                            var div = L.DomUtil.create('div', 'info-container');
-                                            div.innerHTML = '<div class="info-label">Income:COL</div><div class="info-value"></div>';
-                                            return div;
-                                        };
-                
-                                        info.addTo(map);
-                
-                                        // Get the info container element
-                                        var infoContainer = document.querySelector('.info-container');
-                                        var infoValue = infoContainer.querySelector('.info-value');
-                
-                                        // Add mouseover and mouseout events to the GeoJSON layer
-                                        L.geoJSON(geojson, {
-                                            style: function (feature) {
-                                                // Existing style function code
-                                            },
-                                            onEachFeature: function (feature, layer) {
-                                                layer.on({
-                                                    mouseover: function (e) {
-                                                        var countyFips = feature.properties.GEOID;
-                                                        var affordability = affordabilityLookup[countyFips];
-                
-                                                        if (affordability) {
-                                                            infoValue.textContent = affordability.toFixed(3);
-                                                            infoContainer.style.display = 'block';
-                                                        } else {
-                                                            infoContainer.style.display = 'none';
-                                                        }
-                                                    },
-                                                    mouseout: function (e) {
-                                                        infoContainer.style.display = 'none';
-                                                    }
-                                                });
-                                            }
-                                        }).addTo(map);
-                                    });
-                            });
+                                        if (affordability) {
+                                            infoValue.textContent = affordability.toFixed(3);
+                                            infoContainer.style.display = 'block';
+                                        } else {
+                                            infoContainer.style.display = 'none';
+                                        }
+                                    },
+                                    mouseout: function (e) {
+                                        infoContainer.style.display = 'none';
+                                    }
+                                });
+                            }
+                        }).addTo(map);
                     });
+                });
             });
+        });
     </script>
 </body>
 </html>
