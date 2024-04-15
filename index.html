@@ -164,22 +164,26 @@
                         legend.onAdd = function (map) {
                             var div = L.DomUtil.create('div', 'legend');
                             var labels = [
-                                'Affordable',
-                                'Somewhat Affordable',
-                                'Moderately Affordable',
-                                'Less Affordable',
-                                'Not Affordable',
-                                'Unaffordable'
+                                'Data Not Available',
+                                'Unaffordable at Median Income',
+                                ' ',
+                                ' ',
+                                ' ',
+                                ' ',
+                                ' ',
+                                ' ',
+                                'Affordable at Median Income'
                             ];
                             var colors = [
-                                '#008000', // Green
-                                '#7FFF00', // Green Yellow leaning Green
-                                '#9ACD32', // Yellow Green
-                                '#ADFF2F', // Yellow Green leaning Yellow
-                                '#FFFF00', // Yellow
-                                '#FFA500', // Orange
+                                '#808080', // Grey
+                                '#FF0000', // Red
                                 '#FF4500', // Red-Orange
-                                '#FF0000'  // Red
+                                '#FFA500', // Orange
+                                '#FFFF00', // Yellow
+                                '#ADFF2F', // Yellow Green leaning Yellow
+                                '#9ACD32', // Yellow Green
+                                '#7FFF00', // Green Yellow leaning Green
+                                '#008000'  // Green
                             ];                        
                         
                             for (var i = 0; i < labels.length; i++) {
