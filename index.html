@@ -146,9 +146,13 @@
                                     mouseover: function (e) {
                                         var countyFips = feature.properties.GEOID;
                                         var affordability = affordabilityLookup[countyFips];
+                                        var countyName = feature.properties.NAME;
+                                        var stateName = feature.properties.STATE;
 
                                         if (affordability) {
-                                            infoValue.textContent = affordability.toFixed(3);
+                                            infoContainer.innerHTML = '<div class="info-label">' + countyName + ', ' + stateName + '</div>' +
+                                                                       '<div class="info-label">Income:COL</div>' +
+                                                                       '<div class="info-value">' + affordability.toFixed(3) + '</div>';
                                             infoContainer.style.display = 'block';
                                         }
                                     },
